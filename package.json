@@ -3,7 +3,30 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "dev": "parcel ./src/app/index.html"
+  },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "@blueprintjs/core": "^3.18.0",
+    "lodash": "^4.17.15",
+    "mathjs": "^6.2.1",
+    "normalize.css": "^8.0.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.2",
+    "jest": "^24.9.0",
+    "node-sass": "^4.12.0",
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.23.0-module.beta.1"
   }
 }
