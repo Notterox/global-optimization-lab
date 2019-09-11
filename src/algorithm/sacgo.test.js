@@ -4,7 +4,7 @@
 const { sacgo, cores } = require('./sacgo');
 
 describe('Selective Averaging Global Optimization Algorithm', () => {
-  const func = (x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2);
+  const func = (x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2); // 6(x+5)^2+7(y-3)^2
 
   it('correctly finds minimum of simple function', () => {
     const alg = sacgo(1, 2, cores(4).exponential);

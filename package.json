@@ -8,12 +8,14 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^3.18.0",
+    "@blueprintjs/select": "^3.10.0",
     "lodash": "^4.17.15",
     "mathjs": "^6.2.1",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "react-latex": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
