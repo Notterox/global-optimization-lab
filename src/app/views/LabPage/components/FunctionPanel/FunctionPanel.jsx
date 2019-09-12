@@ -53,9 +53,9 @@ class FunctionPanel extends Component {
         type: 'CALCULATE_3D',
         payload: {
           func: this.props.func.func,
-          min: -20,
-          max: 20,
-          step: 0.5
+          min: -5.12,
+          max: 5.12,
+          step: 0.2
         }
       });
     }
@@ -79,7 +79,11 @@ class FunctionPanel extends Component {
                   data={[
                     {
                       ...this.state.pointsData,
-                      type: 'surface'
+                      type: 'surface',
+                      colorbar: {
+                        thickness: 10
+                      },
+                      colorscale: 'Electric'
                     }
                   ]}
                   layout={{
@@ -91,8 +95,12 @@ class FunctionPanel extends Component {
                       r: 10,
                       b: 10,
                       t: 10,
+                    },
+                    scene: {
+                      aspectmode: 'cube'
                     }
                   }}
+
                 />
               </div>
               <div style={{ width: 500, marginLeft: 15 }}>

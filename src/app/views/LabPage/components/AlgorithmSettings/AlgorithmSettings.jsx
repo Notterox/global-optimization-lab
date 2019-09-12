@@ -92,6 +92,12 @@ export default class AlgorithmSettings extends Component {
     example3: {
       name: 'Пример 3',
       latex: ''
+    },
+    rastrigin: {
+      id: 'rastrigin',
+      name: 'Функция Растригина',
+      latex: '$f(x_1, x_2)=(x_1^2-10cos(2\\pi x_1)) + (x_2^2-10cos(2\\pi x_2)) + 20$',
+      func: `(x, y) => (x*x - 10 * Math.cos(2 * Math.PI * x)) + (y*y - 10 * Math.cos(2 * Math.PI * y)) + 20`
     }
   };
 
