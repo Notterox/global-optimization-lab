@@ -12,14 +12,18 @@
     "lodash": "^4.17.15",
     "mathjs": "^6.2.1",
     "normalize.css": "^8.0.1",
+    "plotly.js": "^1.49.4",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-latex": "^1.4.0"
+    "react-latex": "^1.4.0",
+    "react-plotly.js": "^2.3.0",
+    "worker-plugin": "^3.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^5.3.0",
     "eslint-config-airbnb": "^17.1.1",

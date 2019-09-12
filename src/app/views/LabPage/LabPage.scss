@@ -17,5 +17,9 @@
 
   &__right-pane {
     flex-grow: 1;
+
+    > * {
+      margin: 15px;
+    }
   }
 }

@@ -20,42 +20,58 @@ import './AlgorithmSettings.scss';
 
 export default class AlgorithmSettings extends Component {
   static propTypes = {
-    className: PropTypes.string
+    className: PropTypes.string,
+    settings: PropTypes.shape({
+      targetFunction: PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+        latex: PropTypes.string,
+        func: PropTypes.string
+      }),
+      xmin: PropTypes.number,
+      xmax: PropTypes.number,
+      ymin: PropTypes.number,
+      ymax: PropTypes.number
+    }),
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
-    className: ''
+    className: '',
+    settings: {
+      targetFunction: {},
+      xmin: -10,
+      xmax: 10,
+      ymin: -10,
+      ymax: 10
+    },
+    onChange: null
   };
 
-  constructor(props) {
-    super(props);
+  updateState = (state) => {
+    if (this.props.onChange) {
+      this.props.onChange({ ...this.props, ...state });
+    }
+  };
 
-    this.state = {
-      targetFunction: '',
-      xmin: '',
-      xmax: '',
-      ymin: '',
-      ymax: ''
-    };
-  }
+  handleValueChange = (field, val) => this.updateState({ [field]: val });
 
-
-  handleValueChange = (field, val) => this.setState({ [field]: val });
-
-  handleSelectFn = fnId => () => this.setState({ targetFunction: fnId });
+  handleSelectFn = fnId => () => this.updateState({ targetFunction: this.functionDescription[fnId] });
 
   // eslint-disable-next-line react/sort-comp
   functionDescription = {
-    example1: {
-      title: 'Пример 1',
-      latex: '$f(x, y) = 6(x+5)^2+7(y-3)^2$'
+    test: {
+      id: 'test',
+      name: 'Тест',
+      latex: '$f(x, y) = 6(x+5)^2+7(y-3)^2$',
+      func: '(x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2)'
     },
     example2: {
-      title: 'Пример 2',
+      name: 'Пример 2',
       latex: ''
     },
     example3: {
-      title: 'Пример 3',
+      name: 'Пример 3',
       latex: ''
     }
   };
@@ -64,17 +80,20 @@ export default class AlgorithmSettings extends Component {
     <Menu>
       <Menu.Item icon="edit" text="Задать..." />
       <Menu.Divider title="Примеры" />
+      <Menu.Item text="Тест" onClick={this.handleSelectFn('test')} />
       <Menu.Item text="Пример 1" onClick={this.handleSelectFn('example1')} />
       <Menu.Item text="Пример 2" onClick={this.handleSelectFn('example2')} />
       <Menu.Item text="Пример 3" onClick={this.handleSelectFn('example3')} />
       <Menu.Divider title="Тестовые функции" />
       <Menu.Item text="Функция Растригина" onClick={this.handleSelectFn('rastrigin')} />
       <Menu.Item text="Функция Розенброка" onClick={this.handleSelectFn('rosenbrock')} />
-      <Menu.Item text="Функция Изома" onClick={this.handleSelectFn('izom')} />
+      <Menu.Item text="Функция Изома" onClick={this.handleSelectFn('easom')} />
     </Menu>
   );
 
   render() {
+    const { settings } = this.props;
+
     return (
       <div className={`AlgorithmSettings ${this.props.className}`}>
         <Card>
@@ -84,17 +103,12 @@ export default class AlgorithmSettings extends Component {
           >
             <Popover content={this.functionSelectMenu} position={Position.BOTTOM} fill>
               <Button alignText={Alignment.LEFT} rightIcon="caret-down" fill>
-                { this.functionDescription[this.state.targetFunction]
-                  ? this.functionDescription[this.state.targetFunction].title
+                { this.functionDescription[settings.targetFunction.id]
+                  ? settings.targetFunction.name
                   : 'Выбрать'
                 }
               </Button>
             </Popover>
-          </FormGroup>
-          <FormGroup>
-            { this.functionDescription[this.state.targetFunction]
-                && <Latex>{this.functionDescription[this.state.targetFunction].latex}</Latex>
-            }
           </FormGroup>
           <FormGroup
             label="X"
@@ -103,12 +117,12 @@ export default class AlgorithmSettings extends Component {
             <ControlGroup fill>
               <InputGroup
                 placeholder="Xmin"
-                value={this.state.xmin}
+                value={settings.xmin}
                 onChange={e => this.handleValueChange('xmin', e.target.value)}
               />
               <InputGroup
                 placeholder="Xmax"
-                value={this.state.xmax}
+                value={settings.xmax}
                 onChange={e => this.handleValueChange('xmax', e.target.value)}
               />
             </ControlGroup>
@@ -120,12 +134,12 @@ export default class AlgorithmSettings extends Component {
             <ControlGroup fill>
               <InputGroup
                 placeholder="Ymin"
-                value={this.state.ymin}
+                value={settings.ymin}
                 onChange={e => this.handleValueChange('ymin', e.target.value)}
               />
               <InputGroup
                 placeholder="Ymax"
-                value={this.state.ymax}
+                value={settings.ymax}
                 onChange={e => this.handleValueChange('ymax', e.target.value)}
               />
             </ControlGroup>

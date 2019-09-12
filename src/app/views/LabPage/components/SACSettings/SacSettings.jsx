@@ -23,6 +23,22 @@ export default class SacSettings extends Component {
     className: ''
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      kernel: '',
+      selectionExp: 8,
+      shrinkRate: 1,
+      shrinkExp: 2,
+      trialPointsCount: 50
+    };
+  }
+
+  handleSelectKernel = (kernel) => {
+    this
+  }
+
   kernelSelectMenu = (
     <Menu>
       <Menu.Divider title="Ядра" />
@@ -60,6 +76,11 @@ export default class SacSettings extends Component {
             label={<Latex>{'Степень сжатия $\\mathit{q}$'}</Latex>}
           >
             <InputGroup placeholder="2" />
+          </FormGroup>
+          <FormGroup
+            label={<Latex>{'Количество пробных точек $\\mathit{n}$'}</Latex>}
+          >
+            <InputGroup placeholder="50" />
           </FormGroup>
         </Card>
       </div>
