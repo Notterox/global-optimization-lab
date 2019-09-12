@@ -28,7 +28,8 @@ class FunctionPanel extends Component {
     super(props);
 
     this.state = {
-      pointsData: null
+      pointsData: { z: [] },
+      calculating: false
     };
 
   }
@@ -37,6 +38,7 @@ class FunctionPanel extends Component {
     this.context.onmessage = (event) => {
       switch (event.data.type) {
         case 'CALCULATE_3D_RESULT':
+          this.setState({ calculating: false });
           this.setState({ pointsData: event.data.payload });
       }
     };
@@ -46,6 +48,7 @@ class FunctionPanel extends Component {
 
   updateGraph = () => {
     if (this.props.func) {
+      this.setState({ calculating: true })
       this.context.postMessage({
         type: 'CALCULATE_3D',
         payload: {
@@ -69,44 +72,40 @@ class FunctionPanel extends Component {
       <div className={`FunctionPanel ${this.props.className}`}>
         <Card style={{ width: 'fit-content' }}>
           <H4>Функция</H4>
-          { !this.props.func
-            ? 'Функция не задана'
-            : (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
-                <div style={{ marginRight: 15 }}>
-                  <span>{this.props.func.name}</span>
-                  <br />
-                  <br />
-                  <Latex>{this.props.func.latex}</Latex>
-                </div>
-                <div style={{ width: 700, height: 500, border: '1px solid #e9e9e9', overflow: 'hidden' }}>
-                  {
-                    this.state.pointsData
-                      ? <Plot
-                        data={[
-                          {
-                            ...this.state.pointsData,
-                            type: 'surface'
-                          }
-                        ]}
-                        layout={{
-                          autosize: true,
-                          width: 700,
-                          height: 500,
-                          margin: {
-                            l: 10,
-                            r: 10,
-                            b: 10,
-                            t: 10,
-                          }
-                        }}
-                      />
-                      : <div className="easy-flex"><Spinner size={40} /></div>
-                  }
-                </div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
+              <div style={{ width: 700, height: 500, border: '1px solid #e9e9e9', overflow: 'hidden' }}>
+                { this.state.calculating && <div className="easy-flex"><Spinner size={40} /></div> }
+                <Plot
+                  data={[
+                    {
+                      ...this.state.pointsData,
+                      type: 'surface'
+                    }
+                  ]}
+                  layout={{
+                    autosize: true,
+                    width: 700,
+                    height: 500,
+                    margin: {
+                      l: 10,
+                      r: 10,
+                      b: 10,
+                      t: 10,
+                    }
+                  }}
+                />
               </div>
-            )
-          }
+              <div style={{ width: 500, marginLeft: 15 }}>
+                <span>{this.props.func?.name || 'Функция не выбрана'}</span>
+                <br />
+                <br />
+                { this.props.func?.latex && (
+                  Array.isArray(this.props.func.latex)
+                  ? this.props.func.latex.map(l => <><Latex>{l}</Latex><br/></>)
+                  : <Latex>{this.props.func.latex}</Latex>)
+                }
+              </div>
+            </div>
         </Card>
       </div>
     );

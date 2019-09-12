@@ -14,7 +14,6 @@ import {
   Menu,
   Position, Alignment
 } from '@blueprintjs/core';
-import Latex from 'react-latex';
 
 import './AlgorithmSettings.scss';
 
@@ -66,9 +65,29 @@ export default class AlgorithmSettings extends Component {
       latex: '$f(x, y) = 6(x+5)^2+7(y-3)^2$',
       func: '(x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2)'
     },
-    example2: {
-      name: 'Пример 2',
-      latex: ''
+    example1: {
+      id: 'example1',
+      name: 'Пример 1',
+      latex: [
+        '$z_1(x_1, x_2)=7|x_1|^2+7|x_2|^2,$',
+        '$z_2(x_1, x_2)=5|x_1-3|^{0.8}+5|x_2-3|^{0.6}+6,$',
+        '$z_3(x_1, x_2)=5|x_1-6|^{1.3}+5|x_2-3|^{1.3}+2,$',
+        '$z_4(x_1, x_2)=5|x_1-6|^1+5|x_2+6|^1+8,$',
+        '$z_5(x_1, x_2)=4|x_1+6|^{1.5}+4|x_2+6|^{1.5}+7,$',
+        '$z_6(x_1, x_2)=5|x_1+3|^{1.8}+5|x_2|^{1.8}+9,$',
+        '$z_7(x_1, x_2)=6|x_1+6|^{0.6}+6|x_2-6|^{0.9}+4,$',
+        '',
+        '$\\mathit{I(x)=min\\{z_i(x),i=}\\overline{1,7}\\mathit{\\}}$'
+      ],
+      func: `(x, y) => Math.min(
+        7*x*x + 7*y*y,
+        5 * Math.pow(Math.abs(x - 3), 0.8) + 5 * Math.pow(Math.abs(y - 3), 0.6) + 6,
+        5 * Math.pow(Math.abs(x - 6), 1.3) + 5 * Math.pow(Math.abs(y - 6), 1.3) + 2,
+        5 * Math.pow(Math.abs(x - 6), 1) + 5 * Math.pow(Math.abs(y + 6), 1) + 8,
+        4 * Math.pow(Math.abs(x + 6), 1.5) + 4 * Math.pow(Math.abs(y + 6), 1.5) + 7,
+        5 * Math.pow(Math.abs(x + 3), 1.8) + 5 * Math.pow(Math.abs(y), 1.8) + 9,
+        6 * Math.pow(Math.abs(x + 6), 0.6) + 6 * Math.pow(Math.abs(y - 6), 0.9) + 4
+      )`
     },
     example3: {
       name: 'Пример 3',

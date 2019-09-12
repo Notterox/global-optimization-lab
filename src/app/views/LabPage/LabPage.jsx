@@ -12,7 +12,8 @@ export default class LabPage extends Component {
     super(props);
 
     this.state = {
-      algSettings: undefined
+      algSettings: undefined,
+      sacSettings: undefined
     };
   }
 
@@ -25,7 +26,7 @@ export default class LabPage extends Component {
         <div className="LabPage">
           <div className="LabPage__left-pane">
             <AlgorithmSettings settings={this.state.algSettings} className="LabPage__left-pane-control" onChange={this.handleAlgorithmSettingsChanged} />
-            <SacSettings />
+            <SacSettings settings={this.state.sacSettings} onChange={s => this.setState({ sacSettings: s })} />
           </div>
           <div className="LabPage__right-pane">
             <FunctionPanel func={this.state.algSettings?.targetFunction} />
