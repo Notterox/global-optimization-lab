@@ -27,11 +27,11 @@ function calculate3d(func, min, max, step) {
 
 addEventListener('message', (event) => {
   switch (event.data.type) {
-    case 'CALCULATE_3D':
+    case 'CALCULATE_FUNCTION_VALUES':
       const { func, min, max, step } = event.data.payload;
 
       return postMessage({
-        type: 'CALCULATE_3D_RESULT',
+        type: 'CALCULATE_FUNCTION_VALUES_RESULT',
         payload: calculate3d(eval(func), min, max, step)
       });
     default:

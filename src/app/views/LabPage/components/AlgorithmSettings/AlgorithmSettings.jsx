@@ -32,6 +32,7 @@ export default class AlgorithmSettings extends Component {
       ymin: PropTypes.number,
       ymax: PropTypes.number
     }),
+    funcSelectorDisabled: PropTypes.bool,
     onChange: PropTypes.func
   };
 
@@ -44,12 +45,13 @@ export default class AlgorithmSettings extends Component {
       ymin: -10,
       ymax: 10
     },
-    onChange: null
+    onChange: null,
+    funcSelectorDisabled: false
   };
 
   updateState = (state) => {
     if (this.props.onChange) {
-      this.props.onChange({ ...this.props, ...state });
+      this.props.onChange({ ...this.props.settings, ...state });
     }
   };
 
@@ -63,7 +65,10 @@ export default class AlgorithmSettings extends Component {
       id: 'test',
       name: 'Тест',
       latex: '$f(x, y) = 6(x+5)^2+7(y-3)^2$',
-      func: '(x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2)'
+      func: '(x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2)',
+      min: -10,
+      max: 10,
+      step: 0.2
     },
     example1: {
       id: 'example1',
@@ -87,7 +92,10 @@ export default class AlgorithmSettings extends Component {
         4 * Math.pow(Math.abs(x + 6), 1.5) + 4 * Math.pow(Math.abs(y + 6), 1.5) + 7,
         5 * Math.pow(Math.abs(x + 3), 1.8) + 5 * Math.pow(Math.abs(y), 1.8) + 9,
         6 * Math.pow(Math.abs(x + 6), 0.6) + 6 * Math.pow(Math.abs(y - 6), 0.9) + 4
-      )`
+      )`,
+      min: -15,
+      max: 15,
+      step: 0.2
     },
     example3: {
       name: 'Пример 3',
@@ -97,7 +105,28 @@ export default class AlgorithmSettings extends Component {
       id: 'rastrigin',
       name: 'Функция Растригина',
       latex: '$f(x_1, x_2)=(x_1^2-10cos(2\\pi x_1)) + (x_2^2-10cos(2\\pi x_2)) + 20$',
-      func: `(x, y) => (x*x - 10 * Math.cos(2 * Math.PI * x)) + (y*y - 10 * Math.cos(2 * Math.PI * y)) + 20`
+      func: '(x, y) => (x*x - 10 * Math.cos(2 * Math.PI * x)) + (y*y - 10 * Math.cos(2 * Math.PI * y)) + 20',
+      min: -5.12,
+      max: 5.12,
+      step: 0.05
+    },
+    rosenbrock: {
+      id: 'rosenbrock',
+      name: 'Функция Розенброка',
+      latex: '$\\mathit{f(x_1, x_2)}=100(x_2 - x_1^2)^2 + (x_1 - 1)^2$',
+      func: '(x, y) => 100 * Math.pow((y - x*x), 2) + Math.pow((x - 1), 2)',
+      min: -2.5,
+      max: 2.5,
+      step: 0.1
+    },
+    easom: {
+      id: 'easom',
+      name: 'Функция Изома',
+      latex: '$\\mathit{f(x, y)}=-cos(x)cos(y)exp(-((x - \\pi )^2 + (y - \\pi )^2))$',
+      func: '(x, y) => -Math.cos(x) * Math.cos(y) * Math.exp(-(Math.pow(x - Math.PI, 2) + Math.pow(y - Math.PI, 2)))',
+      min: -50,
+      max: 50,
+      step: 0.2
     }
   };
 
@@ -127,7 +156,7 @@ export default class AlgorithmSettings extends Component {
             label="Функция"
           >
             <Popover content={this.functionSelectMenu} position={Position.BOTTOM} fill>
-              <Button alignText={Alignment.LEFT} rightIcon="caret-down" fill>
+              <Button alignText={Alignment.LEFT} rightIcon="caret-down" fill loading={this.props.funcSelectorDisabled}>
                 { this.functionDescription[settings.targetFunction.id]
                   ? settings.targetFunction.name
                   : 'Выбрать'
