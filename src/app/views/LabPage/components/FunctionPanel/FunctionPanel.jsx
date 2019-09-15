@@ -24,6 +24,19 @@ class FunctionPanel extends Component {
     })
   };
 
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   if (
+  //     nextProps.functionValues !== this.props.functionValues ||
+  //     this.props.func?.id !== nextProps.func?.id ||
+  //     this.props.calculating !== nextProps.calculating ||
+  //     this.props.className !== nextProps.className
+  //   ) {
+  //     return true;
+  //   }
+  //
+  //   return false;
+  // }
+
   static defaultProps = {
     className: '',
     func: null,
@@ -34,9 +47,9 @@ class FunctionPanel extends Component {
   render() {
     return (
       <div className={`FunctionPanel ${this.props.className}`}>
-        <Card style={{ width: 'fit-content' }}>
+        <Card>
           <H4>Функция</H4>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
+          <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'start' }}>
             <div style={{ width: 700, height: 500, border: '1px solid #e9e9e9', overflow: 'hidden' }}>
               { this.props.calculating && <div className="easy-flex"><Spinner size={40} /></div> }
               <Plot
@@ -61,7 +74,10 @@ class FunctionPanel extends Component {
                     t: 10,
                   },
                   scene: {
-                    aspectmode: 'cube'
+                    aspectmode: 'cube',
+                    camera: {
+                      eye: { y: -1.25 }
+                    }
                   }
                 }}
               />

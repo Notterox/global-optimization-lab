@@ -11,11 +11,11 @@ function calculate3d(func, min, max, step) {
   const zvals = [];
   const posvals = [];
 
-  for (let x = min; x <= max; x += step) {
+  for (let y = min; y <= max; y += step) {
     let _zvals = [];
-    posvals.push(x);
+    posvals.push(y);
 
-    for (let y = min; y <= max; y += step) {
+    for (let x = min; x <= max; x += step) {
       _zvals.push(func(x, y));
     }
 

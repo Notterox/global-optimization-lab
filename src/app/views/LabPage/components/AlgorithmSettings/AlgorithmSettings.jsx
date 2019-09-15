@@ -57,7 +57,16 @@ export default class AlgorithmSettings extends Component {
 
   handleValueChange = (field, val) => this.updateState({ [field]: val });
 
-  handleSelectFn = fnId => () => this.updateState({ targetFunction: this.functionDescription[fnId] });
+  handleSelectFn = fnId => () => {
+    const fd = this.functionDescription[fnId];
+    this.updateState({
+      targetFunction: fd,
+      xmin: fd.min,
+      xmax: fd.max,
+      ymin: fd.min,
+      ymax: fd.max
+    });
+  };
 
   // eslint-disable-next-line react/sort-comp
   functionDescription = {
@@ -68,7 +77,8 @@ export default class AlgorithmSettings extends Component {
       func: '(x, y) => 6 * Math.pow(x + 5, 2) + 7 * Math.pow(y - 3, 2)',
       min: -10,
       max: 10,
-      step: 0.2
+      step: 0.2,
+      minPoint: [-5, 3]
     },
     example1: {
       id: 'example1',
@@ -95,7 +105,8 @@ export default class AlgorithmSettings extends Component {
       )`,
       min: -15,
       max: 15,
-      step: 0.2
+      step: 0.2,
+      minPoint: [0, 0]
     },
     example3: {
       name: 'Пример 3',
@@ -108,7 +119,8 @@ export default class AlgorithmSettings extends Component {
       func: '(x, y) => (x*x - 10 * Math.cos(2 * Math.PI * x)) + (y*y - 10 * Math.cos(2 * Math.PI * y)) + 20',
       min: -5.12,
       max: 5.12,
-      step: 0.05
+      step: 0.05,
+      minPoint: [0, 0]
     },
     rosenbrock: {
       id: 'rosenbrock',
@@ -117,7 +129,8 @@ export default class AlgorithmSettings extends Component {
       func: '(x, y) => 100 * Math.pow((y - x*x), 2) + Math.pow((x - 1), 2)',
       min: -2.5,
       max: 2.5,
-      step: 0.1
+      step: 0.1,
+      minPoint: [1, 1]
     },
     easom: {
       id: 'easom',
@@ -126,7 +139,8 @@ export default class AlgorithmSettings extends Component {
       func: '(x, y) => -Math.cos(x) * Math.cos(y) * Math.exp(-(Math.pow(x - Math.PI, 2) + Math.pow(y - Math.PI, 2)))',
       min: -50,
       max: 50,
-      step: 0.2
+      step: 0.2,
+      minPoint: [Math.PI, Math.PI]
     }
   };
 
@@ -198,7 +212,6 @@ export default class AlgorithmSettings extends Component {
               />
             </ControlGroup>
           </FormGroup>
-          <Button>Запустить</Button>
         </Card>
       </div>
     );

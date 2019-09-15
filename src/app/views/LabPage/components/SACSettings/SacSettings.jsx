@@ -22,7 +22,7 @@ export default class SacSettings extends Component {
       selectionRate: PropTypes.number,
       shrinkMult: PropTypes.number,
       shrinkRate: PropTypes.number,
-      trialPointsCount: PropTypes.number
+      trialsAmount: PropTypes.number
     }),
     onChange: PropTypes.func
   };
@@ -34,7 +34,7 @@ export default class SacSettings extends Component {
       selectionRate: 8,
       shrinkMult: 1,
       shrinkRate: 2,
-      trialPointsCount: 50
+      trialsAmount: 50
     },
     onChange: () => {}
   };
@@ -56,28 +56,28 @@ export default class SacSettings extends Component {
       id: 'cubic',
       latex: '$(1-g^3)^s$ - кубическое'
     }
-  }
+  };
 
   updateSettings = (setting) => {
-    this.props.onChange({ ...this.props, ...setting });
-  }
+    this.props.onChange({ ...this.props.settings, ...setting });
+  };
 
   handleSelectKernel = (kernel) => () => {
     this.updateSettings({ kernel });
-  }
+  };
 
   kernelSelectMenu = (
     <Menu>
       <Menu.Divider title="Ядра" />
-      <Menu.Item onClick={this.handleSelectKernel('exponential')} text={<Latex>{'$exp(-sg)$ - экспоненциальное'}</Latex>} />
-      <Menu.Item onClick={this.handleSelectKernel('linear')} text={<Latex>{'$(1-g)^s$ - линейное'}</Latex>} />
-      <Menu.Item onClick={this.handleSelectKernel('parabolic')} text={<Latex>{'$(1-g^2)^s$ - параболическое'}</Latex>} />
-      <Menu.Item onClick={this.handleSelectKernel('cubic')} text={<Latex>{'$(1-g^3)^s$ - кубическое'}</Latex>} />
+      <Menu.Item onClick={this.handleSelectKernel('exponential')} text={<Latex>$exp(-sg)$ - экспоненциальное</Latex>} />
+      <Menu.Item onClick={this.handleSelectKernel('linear')} text={<Latex>$(1-g)^s$ - линейное</Latex>} />
+      <Menu.Item onClick={this.handleSelectKernel('parabolic')} text={<Latex>$(1-g^2)^s$ - параболическое</Latex>} />
+      <Menu.Item onClick={this.handleSelectKernel('cubic')} text={<Latex>$(1-g^3)^s$ - кубическое</Latex>} />
     </Menu>
   );
 
   render() {
-    const { kernel, selectionRate, shrinkMult, shrinkRate, trialPointsCount } = this.props.settings
+    const { kernel, selectionRate, shrinkMult, shrinkRate, trialsAmount } = this.props.settings;
 
     return (
       <div className={`AlgorithmSettings ${this.props.className}`}>
@@ -99,22 +99,22 @@ export default class SacSettings extends Component {
           <FormGroup
             label={<Latex>{'Степень селективности $\\mathit{s}$'}</Latex>}
           >
-            <InputGroup placeholder="8" value={selectionRate} onChange={e => this.updateSettings({ selectionRate: +e.target.value })} />
+            <InputGroup placeholder="8" value={selectionRate} onChange={e => this.updateSettings({ selectionRate: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Коэффициент сжатия $\\mathit{\\gamma_q}$'}</Latex>}
           >
-            <InputGroup placeholder="0.8 ≤ y ≤ 1.2" value={shrinkMult} onChange={e => this.updateSettings({ shrinkMult: +e.target.value })} />
+            <InputGroup placeholder="0.8 ≤ y ≤ 1.2" value={shrinkMult} onChange={e => this.updateSettings({ shrinkMult: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Степень сжатия $\\mathit{q}$'}</Latex>}
           >
-            <InputGroup placeholder="2" value={shrinkRate} onChange={e => this.updateSettings({ shrinkRate: +e.target.value })}/>
+            <InputGroup placeholder="2" value={shrinkRate} onChange={e => this.updateSettings({ shrinkRate: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Количество пробных точек $\\mathit{n}$'}</Latex>}
           >
-            <InputGroup placeholder="50" value={trialPointsCount} onChange={e => this.updateSettings({ trialPointsCount: +e.target.value })} />
+            <InputGroup placeholder="50" value={trialsAmount} onChange={e => this.updateSettings({ trialsAmount: e.target.value })} />
           </FormGroup>
         </Card>
       </div>
