@@ -170,7 +170,7 @@ export default class AlgorithmSettings extends Component {
             label="Функция"
           >
             <Popover content={this.functionSelectMenu} position={Position.BOTTOM} fill>
-              <Button alignText={Alignment.LEFT} rightIcon="caret-down" fill loading={this.props.funcSelectorDisabled}>
+              <Button alignText={Alignment.LEFT} small rightIcon="caret-down" fill loading={this.props.funcSelectorDisabled}>
                 { this.functionDescription[settings.targetFunction.id]
                   ? settings.targetFunction.name
                   : 'Выбрать'
@@ -186,11 +186,13 @@ export default class AlgorithmSettings extends Component {
               <InputGroup
                 placeholder="Xmin"
                 value={settings.xmin}
+                small
                 onChange={e => this.handleValueChange('xmin', e.target.value)}
               />
               <InputGroup
                 placeholder="Xmax"
                 value={settings.xmax}
+                small
                 onChange={e => this.handleValueChange('xmax', e.target.value)}
               />
             </ControlGroup>
@@ -203,11 +205,13 @@ export default class AlgorithmSettings extends Component {
               <InputGroup
                 placeholder="Ymin"
                 value={settings.ymin}
+                small
                 onChange={e => this.handleValueChange('ymin', e.target.value)}
               />
               <InputGroup
                 placeholder="Ymax"
                 value={settings.ymax}
+                small
                 onChange={e => this.handleValueChange('ymax', e.target.value)}
               />
             </ControlGroup>

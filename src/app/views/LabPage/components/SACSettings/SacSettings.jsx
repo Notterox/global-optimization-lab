@@ -88,7 +88,7 @@ export default class SacSettings extends Component {
             fill
           >
             <Popover content={this.kernelSelectMenu} position={Position.BOTTOM} fill>
-              <Button alignText={Alignment.LEFT} rightIcon="caret-down" fill>
+              <Button small alignText={Alignment.LEFT} rightIcon="caret-down" fill>
                 { kernel
                   ? <Latex>{ this.kernelsList[kernel].latex }</Latex>
                   : 'Выбрать'
@@ -99,22 +99,22 @@ export default class SacSettings extends Component {
           <FormGroup
             label={<Latex>{'Степень селективности $\\mathit{s}$'}</Latex>}
           >
-            <InputGroup placeholder="8" value={selectionRate} onChange={e => this.updateSettings({ selectionRate: e.target.value })} />
+            <InputGroup small placeholder="8" value={selectionRate} onChange={e => this.updateSettings({ selectionRate: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Коэффициент сжатия $\\mathit{\\gamma_q}$'}</Latex>}
           >
-            <InputGroup placeholder="0.8 ≤ y ≤ 1.2" value={shrinkMult} onChange={e => this.updateSettings({ shrinkMult: e.target.value })} />
+            <InputGroup small placeholder="0.8 ≤ y ≤ 1.2" value={shrinkMult} onChange={e => this.updateSettings({ shrinkMult: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Степень сжатия $\\mathit{q}$'}</Latex>}
           >
-            <InputGroup placeholder="2" value={shrinkRate} onChange={e => this.updateSettings({ shrinkRate: e.target.value })} />
+            <InputGroup small placeholder="2" value={shrinkRate} onChange={e => this.updateSettings({ shrinkRate: e.target.value })} />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Количество пробных точек $\\mathit{n}$'}</Latex>}
           >
-            <InputGroup placeholder="50" value={trialsAmount} onChange={e => this.updateSettings({ trialsAmount: e.target.value })} />
+            <InputGroup small placeholder="50" value={trialsAmount} onChange={e => this.updateSettings({ trialsAmount: e.target.value })} />
           </FormGroup>
         </Card>
       </div>
