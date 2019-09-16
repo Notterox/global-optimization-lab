@@ -57,7 +57,7 @@ export default class OptimizationResultPanel extends Component {
         data: [],
         layout: {
           margin: {
-            t: 20,
+            t: 40,
             b: 20
           }
         },
@@ -68,7 +68,7 @@ export default class OptimizationResultPanel extends Component {
         data: [],
         layout: {
           margin: {
-            t: 20,
+            t: 40,
             b: 20
           }
         },
@@ -78,8 +78,30 @@ export default class OptimizationResultPanel extends Component {
       pointPlot: {
         data: [],
         layout: {
+          title: 'График координаты от номера итерации',
+          xaxis: {
+            visible: true,
+            title: {
+              text: 'Итерация l',
+              font: {
+                family: 'Axis'
+              }
+            }
+          },
+          yaxis:{
+            visible: true,
+            title: {
+              text: 'X1, X2',
+              font: {
+                family: 'Axis'
+              }
+            }
+          },
           margin: {
-            t: 20,
+            t: 40,
+            b: 20
+          },
+          pad: {
             b: 20
           }
         },
@@ -323,7 +345,7 @@ export default class OptimizationResultPanel extends Component {
             />
             <Plot
               data={this.state.pointPlot.data}
-              layout={this.state.pointPlot.data}
+              layout={this.state.pointPlot.layout}
             />
           </div>
         </Card>

@@ -6,7 +6,7 @@ import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 
-import LabPage from './views/LabPage';
+import App from './views/App';
 
 // eslint-disable-next-line react/jsx-filename-extension
-ReactDOM.render(<LabPage/>, document.getElementById('app'));
+ReactDOM.render(<App/>, document.getElementById('app'));
