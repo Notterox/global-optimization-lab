@@ -2,34 +2,34 @@ const zip = require('lodash/zip');
 const Decimal = require('decimal.js').clone({ precision: 6, rounding: 1 });
 
 function kernels(s) {
+  const $s = new Decimal(s);
   return {
-    exponential:  g => s.negated().times(g).exp(),
-    hyperbolic:   g => g.pow(s.negated()),
-    linear:       g => new Decimal(1).minus(g).pow(s),
-    parabolic:    g => new Decimal(1).minus(g.pow(2)).pow(s),
-    cubic:        g => new Decimal(1).minus(g.pow(3)).pow(s)
+    exponential:  g => $s.negated().mul(g).exp(),
+    hyperbolic:   g => g.pow($s.negated()),
+    linear:       g => new Decimal(1).sub(g).pow($s),
+    parabolic:    g => new Decimal(1).sub(g.pow(2)).pow($s),
+    cubic:        g => new Decimal(1).sub(g.pow(3)).pow($s)
   };
 }
 
 function sacgo(shrinkMult, shrinkRate, trialsAmount, kernel) {
-
   function genNoise(n) {
     const noise = Array(n);
     for (let i = 0; i < n; i++) {
-      noise[i] = Decimal.random().times(2).minus(1);
+      noise[i] = Decimal.random().mul(2).sub(1);
     }
 
-    return noise
+    return noise;
   }
 
   function getTrialPoints(start, delta, noise) {
-    return noise.map(n => delta.times(n).plus(start));
+    return noise.map(n => delta.mul(n).add(start));
   }
 
   function getDimlessValues(sequence, max, min) {
-    const diff = max.minus(min);
+    const diff = max.sub(min);
 
-    return sequence.map(v => v.minus(min).div(diff));
+    return sequence.map(v => v.sub(min).div(diff));
   }
 
   function getSelectiveValues(sequence, kernel) {
@@ -43,49 +43,66 @@ function sacgo(shrinkMult, shrinkRate, trialsAmount, kernel) {
     const eps2 = new Decimal(options.eps2 || 0.01);
     const n = trialsAmount || 50;
     const log = [];
+    // eslint-disable-next-line no-underscore-dangle
     const _func = (x, y) => new Decimal(func(x.toNumber(), y.toNumber()));
-    const xmin = bound[0][0];
-    const xmax = bound[0][1];
-    const ymin = bound[1][0];
-    const ymax = bound[1][1];
+    const xmin = new Decimal(bounds[0][0]);
+    const xmax = new Decimal(bounds[0][1]);
+    const ymin = new Decimal(bounds[1][0]);
+    const ymax = new Decimal(bounds[1][1]);
 
     let iterations = 0;
     let delta = [
-      xmax.minus(xmin).div(2),
-      ymax.minus(ymin).div(2)
+      xmax.sub(xmin).div(2),
+      ymax.sub(ymin).div(2)
     ];
     let x = [
-      xmin.plus(delta[0]),
-      ymin.plus(delta[1])
-    ]
-    let maxFuncVal = Number.MAX_SAFE_INTEGER;
-    let minFuncVal = 0;
+      xmin.add(delta[0]),
+      ymin.add(delta[1])
+    ];
+    let maxFuncVal = new Decimal(Number.MAX_SAFE_INTEGER);
+    let minFuncVal = new Decimal(0);
 
-    while (!(Math.max(...delta) <= eps1 || (maxFuncVal - minFuncVal <= eps2)) && iterations < 100000) {
-      const noise = Array(bounds.length).fill(null).map(() => genNoise(n));
+    while (
+      !(Decimal.max(...delta).lessThanOrEqualTo(eps1)
+       || maxFuncVal.sub(minFuncVal).lessThanOrEqualTo(eps2))
+      && iterations < 100) {
+      const noise = [genNoise(n), genNoise(n)];
       const noisePoints = zip(...noise);
-      const trials = noise.map((ni, i) => getTrialPoints(x[i], delta[i], ni));
-      const funcVals = zip(...trials).map(point => func(...point));
-      maxFuncVal = Math.max(...funcVals);
-      minFuncVal = Math.min(...funcVals);
+      const trials = [
+        getTrialPoints(x[0], delta[0], noise[0]),
+        getTrialPoints(x[1], delta[1], noise[1])
+      ];
+      const funcVals = zip(...trials).map(point => _func(...point));
+      maxFuncVal = Decimal.max(...funcVals);
+      minFuncVal = Decimal.min(...funcVals);
       const dimlessVals = getDimlessValues(funcVals, maxFuncVal, minFuncVal);
       const selectiveVals = getSelectiveValues(dimlessVals, kernel);
 
       const selectedNoise = zip(noisePoints, selectiveVals)
         .reduce((acc, [point, sval]) => [
-          acc[0] + point[0] * sval,
-          acc[1] + point[1] * sval
-        ], [0, 0]);
+          point[0].times(sval).plus(acc[0]),
+          point[1].times(sval).plus(acc[1])
+        ], [new Decimal(0), new Decimal(0)]);
+
       const nextDelta = zip(noisePoints, selectiveVals)
         .reduce((acc, [point, sval]) => [
-          acc[0] + Math.pow(Math.abs(point[0]), shrinkRate) * sval,
-          acc[1] + Math.pow(Math.abs(point[1]), shrinkRate) * sval
-        ], [0, 0])
-        .map((coord, i) => shrinkMult * delta[i] * Math.pow(coord, 1 / shrinkRate));
-      const nextX = x.map((coord, i) => coord + delta[i] * selectedNoise[i]);
+          point[0].abs().pow(shrinkRate).mul(sval).add(acc[0]),
+          point[1].abs().pow(shrinkRate).mul(sval).add(acc[1])
+        ], [new Decimal(0), new Decimal(0)])
+        .map((coord, i) => coord.pow(new Decimal(1).div(shrinkRate)).mul(delta[i]).mul(shrinkMult));
+
+      const nextX = [
+        delta[0].mul(selectedNoise[0]).add(x[0]),
+        delta[1].mul(selectedNoise[1]).add(x[1]),
+      ];
 
       if (options.trackChanges) {
-        log.push({ point: x, delta, trials, value: func(...x) });
+        log.push({
+          point: x.map(e => e.toNumber()),
+          delta: delta.map(e => e.toNumber()),
+          trials: trials.map(t => t.map(e => e.toNumber())),
+          value: _func(...x).toNumber()
+        });
       }
 
       x = nextX;
@@ -94,10 +111,19 @@ function sacgo(shrinkMult, shrinkRate, trialsAmount, kernel) {
     }
 
     if (options.trackChanges) {
-      log.push({ point: x, delta, trials: [], value: func(...x) });
+      log.push({
+        point: x.map(e => e.toNumber()),
+        delta: delta.map(e => e.toNumber()),
+        trials: [],
+        value: _func(...x).toNumber()
+      });
     }
 
-    return { point: x, iterations, ...(log.length ? { log } : {}), value: func(...x) };
+    return {
+      point: x.map(e => e.toNumber()),
+      iterations,
+      ...(log.length ? { log } : {}),
+      value: _func(...x).toNumber() };
   };
 }
 

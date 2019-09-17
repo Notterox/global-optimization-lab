@@ -88,7 +88,7 @@ export default class OptimizationResultPanel extends Component {
               }
             }
           },
-          yaxis:{
+          yaxis: {
             visible: true,
             title: {
               text: 'X1, X2',
@@ -118,8 +118,8 @@ export default class OptimizationResultPanel extends Component {
       nextState.functionValuesPlot.data = this.getFunctionValuePlotData(nextProps, nextState);
       nextState.deltaPlot.data = this.getDeltaPlotData(nextProps, nextState);
       nextState.pointPlot.data = this.getPointPlotData(nextProps, nextState);
-    } else if (nextState.currentIteration !== this.state.currentIteration ||
-      nextState.showTrials !== this.state.showTrials) {
+    } else if (nextState.currentIteration !== this.state.currentIteration
+      || nextState.showTrials !== this.state.showTrials) {
       nextState.contourPlot.data = this.getContourPlotData(nextProps, nextState);
     }
 
@@ -197,7 +197,8 @@ export default class OptimizationResultPanel extends Component {
 
     return [
       {
-        x, y,
+        x,
+        y,
         mode: 'lines+markers',
         type: 'scatter'
       }
@@ -221,14 +222,18 @@ export default class OptimizationResultPanel extends Component {
 
     return [
       {
-        x, y: y1,
+        x,
+        y: y1,
         mode: 'lines+markers',
-        type: 'scatter'
+        type: 'scatter',
+        name: 'ΔX1'
       },
       {
-        x, y: y2,
+        x,
+        y: y2,
         mode: 'lines+markers',
-        type: 'scatter'
+        type: 'scatter',
+        name: 'ΔX2'
       }
     ];
   };
@@ -250,14 +255,18 @@ export default class OptimizationResultPanel extends Component {
 
     return [
       {
-        x, y: y1,
+        x,
+        y: y1,
         mode: 'lines+markers',
-        type: 'scatter'
+        type: 'scatter',
+        name: 'X1'
       },
       {
-        x, y: y2,
+        x,
+        y: y2,
         mode: 'lines+markers',
-        type: 'scatter'
+        type: 'scatter',
+        name: 'X2'
       }
     ];
   };
@@ -288,16 +297,17 @@ export default class OptimizationResultPanel extends Component {
 
     const x = [];
     const y = [];
-    const text= [];
+    const text = [];
 
-    for(let i = 0; i <= till; i++) {
+    for (let i = 0; i <= till; i++) {
       x.push(log[i].point[0]);
       y.push(log[i].point[1]);
       text.push(i);
     }
 
     return {
-      x, y,
+      x,
+      y,
       mode: 'lines+markers+text',
       type: 'scattergl',
       showlegend: false,
@@ -307,7 +317,8 @@ export default class OptimizationResultPanel extends Component {
 
   render() {
     return (
-      this.props.solution && <div className={`OptimizationResultPanel ${this.props.className}`}>
+      this.props.solution && (
+      <div className={`OptimizationResultPanel ${this.props.className}`}>
         <Card>
           <H4>Результат оптимизации</H4>
           <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
@@ -327,9 +338,18 @@ export default class OptimizationResultPanel extends Component {
                 Показать пробные точки
               </Checkbox>
               <div>
-                <div>Решение в точке {`(${this.props.solution.point.map(n => Number(n).toPrecision(2)).join(', ')})`}</div>
-                <div>Итераций {this.props.solution.iterations}</div>
-                <div>Ошибка решения {zip(this.props.solution.point, this.props.minPoint).map(([c1, c2]) => Math.abs(c1 - c2).toPrecision(3)).join(', ')}</div>
+                <div>
+                  Решение в точке
+                  {`(${this.props.solution.point.map(n => Number(n).toPrecision(2)).join(', ')})`}
+                </div>
+                <div>
+                  Итераций
+                  {this.props.solution.iterations}
+                </div>
+                <div>
+                  Ошибка решения
+                  {zip(this.props.solution.point, this.props.minPoint).map(([c1, c2]) => Math.abs(c1 - c2).toPrecision(3)).join(', ')}
+                </div>
               </div>
             </div>
           </div>
@@ -350,6 +370,7 @@ export default class OptimizationResultPanel extends Component {
           </div>
         </Card>
       </div>
+      )
     );
   }
 }

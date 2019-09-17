@@ -24,7 +24,8 @@ export default class SacSettings extends Component {
       shrinkRate: PropTypes.number,
       trialsAmount: PropTypes.number
     }),
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    disabledField: PropTypes.string
   };
 
   static defaultProps = {
@@ -36,7 +37,8 @@ export default class SacSettings extends Component {
       shrinkRate: 2,
       trialsAmount: 50
     },
-    onChange: () => {}
+    onChange: () => {},
+    disabledField: ''
   };
 
   kernelsList = {
@@ -99,22 +101,48 @@ export default class SacSettings extends Component {
           <FormGroup
             label={<Latex>{'Степень селективности $\\mathit{s}$'}</Latex>}
           >
-            <InputGroup small placeholder="8" value={selectionRate} onChange={e => this.updateSettings({ selectionRate: e.target.value })} />
+            <InputGroup
+              fill
+              small
+              placeholder="8"
+              value={selectionRate}
+              onChange={e => this.updateSettings({ selectionRate: e.target.value })}
+              disabled={this.props.disabledField === 'selectionRate'}
+            />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Коэффициент сжатия $\\mathit{\\gamma_q}$'}</Latex>}
           >
-            <InputGroup small placeholder="0.8 ≤ y ≤ 1.2" value={shrinkMult} onChange={e => this.updateSettings({ shrinkMult: e.target.value })} />
+            <InputGroup
+              fill
+              small
+              placeholder="0.8 ≤ y ≤ 1.2"
+              value={shrinkMult}
+              onChange={e => this.updateSettings({ shrinkMult: e.target.value })}
+              disabled={this.props.disabledField === 'shrinkMult'}
+            />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Степень сжатия $\\mathit{q}$'}</Latex>}
           >
-            <InputGroup small placeholder="2" value={shrinkRate} onChange={e => this.updateSettings({ shrinkRate: e.target.value })} />
+            <InputGroup
+              small
+              placeholder="2"
+              value={shrinkRate}
+              onChange={e => this.updateSettings({ shrinkRate: e.target.value })}
+              disabled={this.props.disabledField === 'shrinkRate'}
+            />
           </FormGroup>
           <FormGroup
             label={<Latex>{'Количество пробных точек $\\mathit{n}$'}</Latex>}
           >
-            <InputGroup small placeholder="50" value={trialsAmount} onChange={e => this.updateSettings({ trialsAmount: e.target.value })} />
+            <InputGroup
+              small
+              placeholder="50"
+              value={trialsAmount}
+              onChange={e => this.updateSettings({ trialsAmount: e.target.value })}
+              disabled={this.props.disabledField === 'trialsAmount'}
+            />
           </FormGroup>
         </Card>
       </div>

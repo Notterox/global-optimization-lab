@@ -4,6 +4,7 @@ import { Navbar, Button, Alignment } from '@blueprintjs/core';
 
 import LabPage from '../LabPage/LabPage';
 import CyclicRunPage from '../CycleRunPage';
+import ExperimentPage from '../ExperimentPage';
 
 export default class App extends Component {
   static propTypes = {
@@ -40,7 +41,11 @@ export default class App extends Component {
           }
           {
             this.state.currentScreen === 'cycle'
-            && <CyclicRunPage/>
+            && <CyclicRunPage />
+          }
+          {
+            this.state.currentScreen === 'experiment'
+            && <ExperimentPage />
           }
         </div>
       </div>

@@ -1,0 +1,30 @@
+.ExperimentPage {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  &__left-pane {
+    width: 400px;
+    min-width: 400px;
+    border-right: #e0e0e0 solid 1px;
+    padding: 20px 15px 0px 15px;
+    height: 100%;
+    overflow-y: scroll;
+
+    > * {
+      margin-bottom: 15px;
+    }
+  }
+
+  &__right-pane {
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: scroll;
+    > * {
+      margin: 15px;
+    }
+  }
+}

@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { Button, H4, Intent, ProgressBar } from '@blueprintjs/core';
 import Plot from 'react-plotly.js';
 
-import './CyclicRunPage.scss';
+import './ExperimentPage.scss';
 import AlgorithmSettings from '../LabPage/components/AlgorithmSettings';
 import SacSettings from '../LabPage/components/SACSettings';
-import CyclicRunSettings from './components/CyclicRunSettings';
+import ExperimentSettings from './components/ExperimentSettings';
 import WorkerContext from '../../workers/WorkerContext';
 
-class CyclicRunPage extends Component {
+class ExperimentPage extends Component {
   static propTypes = {
     className: PropTypes.string,
   };
@@ -26,11 +26,11 @@ class CyclicRunPage extends Component {
     this.state = {
       algSettings: undefined,
       sacSettings: undefined,
-      cyclicRunSettings: undefined,
+      experimentSettings: undefined,
       precision: 0.1,
       errorsAmount: 0,
       errorValues: null,
-      runNumValues: null,
+      parameterValues: null,
       iterationsValues: null,
       progress: 0,
       running: false
@@ -43,10 +43,17 @@ class CyclicRunPage extends Component {
 
   handleCyclicRunWorkerMessage = (event) => {
     switch (event.data.type) {
-      case 'CYCLIC_RUN_CHUNK':
-        this.addChunk(this.state.minPoint, event.data.payload.chunk, event.data.payload.progress);
+      case 'EXPERIMENT_RUN_CHUNK':
+        console.log('EXPERIMENT_RUN_CHUNK', event.data.payload);
+        this.addChunk(
+          this.state.minPoint,
+          event.data.payload.chunk,
+          event.data.payload.parametersValuesChunk,
+          event.data.payload.progress
+        );
         break;
-      case 'CYCLIC_RUN_END':
+      case 'EXPERIMENT_RUN_END':
+        console.log('EXPERIMENT_RUN_END', event.data.payload);
         this.setState({
           running: false
         });
@@ -65,31 +72,32 @@ class CyclicRunPage extends Component {
     return values;
   };
 
-  handleStartCyclicRun = () => {
+  handleStartExperiment = () => {
     this.setState({
       progress: 0,
       errorValues: [],
       errorsAmount: 0,
       iterationsValues: [],
-      runNumValues: this.getRunNumValues(this.state.cyclicRunSettings.amount),
+      parameterValues: [],
       minPoint: this.state.algSettings.targetFunction.minPoint,
       running: true
     });
     this.context.cyclicRunWorker.postMessage({
-      type: 'CYCLIC_RUN_START',
+      type: 'EXPERIMENT_RUN_START',
       payload: {
-        amount: this.state.cyclicRunSettings.amount,
+        experimentSettings: this.state.experimentSettings,
         algSettings: this.state.algSettings,
         sacSettings: this.state.sacSettings
       }
     });
   };
 
-  addChunk = (minPoint, chunk, progress) => {
+  addChunk = (minPoint, chunk, parameterValuesChunk, progress) => {
     const {
       errorValues,
       iterationsValues,
-      errorsAmount
+      errorsAmount,
+      parameterValues
     } = this.state;
     const errorChunk = [];
     let errorsAmountInChunk = 0;
@@ -108,12 +116,9 @@ class CyclicRunPage extends Component {
       errorValues: (errorValues || []).concat(errorChunk),
       iterationsValues: (iterationsValues || []).concat(iterationsChunk),
       errorsAmount: errorsAmount + errorsAmountInChunk,
+      parameterValues: (parameterValues || []).concat(parameterValuesChunk),
       progress
     });
-  };
-
-  diffPoints = (p1, p2) => {
-    return [Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1])];
   };
 
   distPoints = (p1, p2) => Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
@@ -129,7 +134,9 @@ class CyclicRunPage extends Component {
     Number.isFinite(+this.state.sacSettings?.shrinkRate),
     Number.isFinite(+this.state.sacSettings?.shrinkMult),
     Number.isInteger(+this.state.sacSettings?.trialsAmount),
-    Number.isInteger(+this.state.cyclicRunSettings?.amount)
+    Number.isFinite(+this.state.experimentSettings?.start),
+    Number.isFinite(+this.state.experimentSettings?.end),
+    Number.isFinite(+this.state.experimentSettings?.step)
   ].every(e => !!e);
 
   render() {
@@ -142,7 +149,7 @@ class CyclicRunPage extends Component {
             icon="play"
             intent={Intent.PRIMARY}
             disabled={!this.isValid() || this.state.running}
-            onClick={this.handleStartCyclicRun}
+            onClick={this.handleStartExperiment}
           >
             Запустить
           </Button>
@@ -150,10 +157,10 @@ class CyclicRunPage extends Component {
             this.state.running
             && <ProgressBar value={this.state.progress} intent={Intent.PRIMARY} />
           }
-          <CyclicRunSettings
-            settings={this.state.cyclicRunSettings}
-            onChange={s => this.setState({ cyclicRunSettings: s })}
-            onInit={s => this.setState({ cyclicRunSettings: s })}
+          <ExperimentSettings
+            settings={this.state.experimentSettings}
+            onChange={s => this.setState({ experimentSettings: s })}
+            onInit={s => this.setState({ experimentSettings: s })}
           />
           <AlgorithmSettings
             settings={this.state.algSettings}
@@ -162,20 +169,20 @@ class CyclicRunPage extends Component {
           <SacSettings
             settings={this.state.sacSettings}
             onChange={s => this.setState({ sacSettings: s })}
+            disabledField={this.state.experimentSettings?.parameter}
           />
         </div>
         <div className="CycleRunPage__right-pane">
           {
             this.state.errorValues
             && this.state.iterationsValues
-            && this.state.runNumValues
+            && this.state.parameterValues
             && (
               <>
-                <H4>{`Количество ошибок ${this.state.errorsAmount} / ${this.state.runNumValues.length} = ${(this.state.errorsAmount / this.state.runNumValues.length * 100).toPrecision(2)}%`}</H4>
                 <Plot
                   data={[
                     {
-                      x: this.state.runNumValues,
+                      x: this.state.parameterValues,
                       y: this.state.errorValues,
                       mode: 'lines',
                       type: 'scattergl'
@@ -184,9 +191,6 @@ class CyclicRunPage extends Component {
                   layout={{
                     width: 1400,
                     height: 300,
-                    xaxis: {
-                      range: [1, this.state.runNumValues.length]
-                    },
                     margin: {
                       t: 20,
                       l: 20,
@@ -199,7 +203,7 @@ class CyclicRunPage extends Component {
                 <Plot
                   data={[
                     {
-                      x: this.state.runNumValues,
+                      x: this.state.parameterValues,
                       y: this.state.iterationsValues,
                       mode: 'lines',
                       type: 'scattergl'
@@ -208,9 +212,6 @@ class CyclicRunPage extends Component {
                   layout={{
                     width: 1400,
                     height: 300,
-                    xaxis: {
-                      range: [1, this.state.runNumValues.length]
-                    },
                     margin: {
                       t: 20,
                       l: 20,
@@ -228,4 +229,4 @@ class CyclicRunPage extends Component {
   }
 }
 
-export default CyclicRunPage;
+export default ExperimentPage;

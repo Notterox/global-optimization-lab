@@ -22,6 +22,15 @@ function getNormalizedSacSettings({ selectionRate, shrinkRate, shrinkMult, trial
   };
 }
 
+function getNormalizedExperimentSettings({ parameter, start, end, step }) {
+  return {
+    parameter,
+    start: +start,
+    end: +end,
+    step: +step
+  };
+}
+
 function solve(algSettings, sacSettings) {
   const { selectionRate, shrinkRate, shrinkMult, trialsAmount, kernel } = sacSettings;
   const { func, xmin, xmax, ymin, ymax } = algSettings;
@@ -43,7 +52,7 @@ function runChunk(chunkSize, algSettings, sacSettings) {
   return chunk;
 }
 
-function start(amount, algSettings, sacSettings) {
+function startCyclicRun(amount, algSettings, sacSettings) {
   let chunksTotal = 0;
   const cycleHandler = () => {
     const nextChunkSize = Math.min(100, amount - chunksTotal);
@@ -67,11 +76,63 @@ function start(amount, algSettings, sacSettings) {
   cycleHandler();
 }
 
+function runExperimentChunk(start, step, end, chunkMaxSize, parameter, algSettings, sacSettings) {
+  const chunk = [];
+  const parametersValuesChunk = [];
+
+  for (let i = start; i <= end && chunk.length < chunkMaxSize; i = +(i + step).toFixed(3)) {
+    chunk.push(solve(algSettings, { ...sacSettings, [parameter]: i }));
+    parametersValuesChunk.push(i);
+  }
+
+  return { chunk, parametersValuesChunk };
+}
+
+
+function startExperiment(algSettings, sacSettings, experimentSettings) {
+  const { start, end, step, parameter } = experimentSettings;
+  const chunkMaxSize = 10;
+  let lastParameterValue = start;
+
+  const experimentHandler = () => {
+    const result = runExperimentChunk(lastParameterValue, step, end, chunkMaxSize, parameter, algSettings, sacSettings);
+
+    lastParameterValue = +(lastParameterValue + step * chunkMaxSize).toFixed(3);
+    postMessage({
+      type: 'EXPERIMENT_RUN_CHUNK',
+      payload: {
+        progress: (lastParameterValue - start) / (end - start),
+        ...result
+      }
+    });
+    if (lastParameterValue < end) {
+      return setTimeout(experimentHandler, 0);
+    }
+    postMessage({
+      type: 'EXPERIMENT_RUN_END',
+      payload: {}
+    });
+  };
+
+  experimentHandler();
+}
+
 addEventListener('message', (event) => {
+  let algSettings;
+  let sacSettings;
+  let experimentSettings;
+
   switch (event.data.type) {
     case 'CYCLIC_RUN_START':
-      const algSettings = getNormalizedAlgSettings(event.data.payload.algSettings);
-      const sacSettings = getNormalizedSacSettings(event.data.payload.sacSettings);
-      start(event.data.payload.amount, algSettings, sacSettings);
+      algSettings = getNormalizedAlgSettings(event.data.payload.algSettings);
+      sacSettings = getNormalizedSacSettings(event.data.payload.sacSettings);
+      startCyclicRun(event.data.payload.amount, algSettings, sacSettings);
+      break;
+    case 'EXPERIMENT_RUN_START':
+      algSettings = getNormalizedAlgSettings(event.data.payload.algSettings);
+      sacSettings = getNormalizedSacSettings(event.data.payload.sacSettings);
+      experimentSettings = getNormalizedExperimentSettings(event.data.payload.experimentSettings);
+      startExperiment(algSettings, sacSettings, experimentSettings);
+      break;
   }
 });
