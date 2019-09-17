@@ -1,6 +1,6 @@
 /* global addEventListener, postMessage */
 
-function calculate3d(func, min, max, step) {
+function calculate3d(func, xmin, xmax, ymin, ymax, step) {
   if (typeof step !== 'number' || step <= 0) {
     throw Error('Step should be a number and greater than zero');
   }
@@ -11,11 +11,11 @@ function calculate3d(func, min, max, step) {
   const zvals = [];
   const posvals = [];
 
-  for (let y = min; y <= max; y += step) {
+  for (let y = ymin; y <= ymax; y += step) {
     let _zvals = [];
     posvals.push(y);
 
-    for (let x = min; x <= max; x += step) {
+    for (let x = xmin; x <= xmax; x += step) {
       _zvals.push(func(x, y));
     }
 
@@ -28,11 +28,11 @@ function calculate3d(func, min, max, step) {
 addEventListener('message', (event) => {
   switch (event.data.type) {
     case 'CALCULATE_FUNCTION_VALUES':
-      const { func, min, max, step } = event.data.payload;
+      const { func, xmin, xmax, ymin, ymax, step } = event.data.payload;
 
       return postMessage({
         type: 'CALCULATE_FUNCTION_VALUES_RESULT',
-        payload: calculate3d(eval(func), min, max, step)
+        payload: calculate3d(eval(func), xmin, xmax, ymin, ymax, step)
       });
     default:
       console.log(`functionWorker - unknown message type: ${event.data.type}`);

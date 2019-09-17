@@ -9,6 +9,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.18.0",
     "@blueprintjs/select": "^3.10.0",
+    "decimal.js": "^10.2.0",
     "lodash": "^4.17.15",
     "mathjs": "^6.2.1",
     "normalize.css": "^8.0.1",
@@ -17,8 +18,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-latex": "^1.4.0",
-    "react-plotly.js": "^2.3.0",
-    "worker-plugin": "^3.2.0"
+    "react-plotly.js": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

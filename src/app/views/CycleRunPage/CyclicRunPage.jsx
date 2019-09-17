@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Intent, ProgressBar } from '@blueprintjs/core';
+import { Button, H4, Intent, ProgressBar } from '@blueprintjs/core';
 import Plot from 'react-plotly.js';
 
 import './CyclicRunPage.scss';
@@ -27,8 +27,9 @@ class CyclicRunPage extends Component {
       algSettings: undefined,
       sacSettings: undefined,
       cyclicRunSettings: undefined,
-      errorValues1: null,
-      errorValues2: null,
+      precision: 0.1,
+      errorsAmount: 0,
+      errorValues: null,
       runNumValues: null,
       iterationsValues: null,
       progress: 0,
@@ -67,8 +68,8 @@ class CyclicRunPage extends Component {
   handleStartCyclicRun = () => {
     this.setState({
       progress: 0,
-      errorValues1: [],
-      errorValues2: [],
+      errorValues: [],
+      errorsAmount: 0,
       iterationsValues: [],
       runNumValues: this.getRunNumValues(this.state.cyclicRunSettings.amount),
       minPoint: this.state.algSettings.targetFunction.minPoint,
@@ -86,25 +87,27 @@ class CyclicRunPage extends Component {
 
   addChunk = (minPoint, chunk, progress) => {
     const {
-      errorValues1,
-      errorValues2,
-      iterationsValues
+      errorValues,
+      iterationsValues,
+      errorsAmount
     } = this.state;
-    const errorChunk1 = [];
-    const errorChunk2 = [];
+    const errorChunk = [];
+    let errorsAmountInChunk = 0;
     const iterationsChunk = [];
 
     chunk.forEach((ch) => {
-      const error = this.diffPoints(ch.point, minPoint);
-      errorChunk1.push(error[0]);
-      errorChunk2.push(error[1]);
+      const error = this.distPoints(ch.point, minPoint);
+      errorChunk.push(error);
       iterationsChunk.push(ch.iterations);
+      if (error > this.state.precision) {
+        errorsAmountInChunk += 1;
+      }
     });
 
     this.setState({
-      errorValues1: (errorValues1 || []).concat(errorChunk1),
-      errorValues2: (errorValues2 || []).concat(errorChunk2),
+      errorValues: (errorValues || []).concat(errorChunk),
       iterationsValues: (iterationsValues || []).concat(iterationsChunk),
+      errorsAmount: errorsAmount + errorsAmountInChunk,
       progress
     });
   };
@@ -112,6 +115,8 @@ class CyclicRunPage extends Component {
   diffPoints = (p1, p2) => {
     return [Math.abs(p1[0] - p2[0]), Math.abs(p1[1] - p2[1])];
   };
+
+  distPoints = (p1, p2) => Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
 
   isValid = () => [
     this.state.algSettings?.targetFunction?.id,
@@ -161,33 +166,30 @@ class CyclicRunPage extends Component {
         </div>
         <div className="CycleRunPage__right-pane">
           {
-            this.state.errorValues1
-            && this.state.errorValues2
+            this.state.errorValues
             && this.state.iterationsValues
             && this.state.runNumValues
             && (
               <>
+                <H4>{`Количество ошибок ${this.state.errorsAmount} / ${this.state.runNumValues.length} = ${(this.state.errorsAmount / this.state.runNumValues.length * 100).toPrecision(2)}%`}</H4>
                 <Plot
                   data={[
                     {
                       x: this.state.runNumValues,
-                      y: this.state.errorValues1,
-                      mode: 'lines',
-                      type: 'scattergl'
-                    },
-                    {
-                      x: this.state.runNumValues,
-                      y: this.state.errorValues2,
+                      y: this.state.errorValues,
                       mode: 'lines',
                       type: 'scattergl'
                     }
                   ]}
                   layout={{
+                    width: 1400,
+                    height: 500,
                     xaxis: {
                       range: [1, this.state.runNumValues.length]
                     }
                   }}
                 />
+                <br />
                 <Plot
                   data={[
                     {
@@ -198,6 +200,8 @@ class CyclicRunPage extends Component {
                     }
                   ]}
                   layout={{
+                    width: 1400,
+                    height: 500,
                     xaxis: {
                       range: [1, this.state.runNumValues.length]
                     }

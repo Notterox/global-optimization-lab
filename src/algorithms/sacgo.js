@@ -33,21 +33,24 @@ function sacgo(shrinkMult, shrinkRate, trialsAmount, kernel) {
   }
 
   return function algorithm(func, bounds, options = {}) {
-    const eps = options.eps || 0.01;
+    const eps1 = options.eps1 || 0.01;
+    const eps2 = options.eps2 || 0.01;
     const n = trialsAmount || 50;
     const log = [];
 
     let iterations = 0;
     let x = bounds.map(([min, max]) => min + ((max - min) / 2));
     let delta = bounds.map(([min, max]) => (max - min) / 2);
+    let maxFuncVal = Number.MAX_SAFE_INTEGER;
+    let minFuncVal = 0;
 
-    while (Math.max(...delta) > eps && iterations < 100000) {
+    while (!(Math.max(...delta) <= eps1 || (maxFuncVal - minFuncVal <= eps2)) && iterations < 100000) {
       const noise = Array(bounds.length).fill(null).map(() => genNoise(n));
       const noisePoints = zip(...noise);
       const trials = noise.map((ni, i) => getTrialPoints(x[i], delta[i], ni));
       const funcVals = zip(...trials).map(point => func(...point));
-      const maxFuncVal = Math.max(...funcVals);
-      const minFuncVal = Math.min(...funcVals);
+      maxFuncVal = Math.max(...funcVals);
+      minFuncVal = Math.min(...funcVals);
       const dimlessVals = getDimlessValues(funcVals, maxFuncVal, minFuncVal);
       const selectiveVals = getSelectiveValues(dimlessVals, kernel);
 

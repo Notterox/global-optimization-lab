@@ -3,6 +3,8 @@ import { Button, Intent } from '@blueprintjs/core';
 
 import './LabPage.scss';
 
+import debounce from 'lodash/debounce';
+
 import AlgorithmSettings from './components/AlgorithmSettings/AlgorithmSettings';
 import SacSettings from './components/SACSettings';
 import FunctionPanel from './components/FunctionPanel/FunctionPanel';
@@ -35,8 +37,13 @@ export default class LabPage extends Component {
   }
 
   handleAlgorithmSettingsChanged = (algSettings) => {
-    if (this.state.algSettings?.targetFunction.id !== algSettings.targetFunction?.id) {
-      this.updateTargetFunctionValues(algSettings.targetFunction);
+    if (this.state.algSettings?.targetFunction.id !== algSettings.targetFunction?.id
+      || this.state.algSettings.xmin !== algSettings.xmin
+      || this.state.algSettings.xmax !== algSettings.xmax
+      || this.state.algSettings.ymin !== algSettings.ymin
+      || this.state.algSettings.ymax !== algSettings.ymax
+    ) {
+      this.debouncedUpdateFunctionValues(algSettings);
     }
 
     this.setState({ algSettings });
@@ -71,17 +78,33 @@ export default class LabPage extends Component {
     }
   };
 
-  updateTargetFunctionValues = (targetFunction) => {
-    if (targetFunction) {
-      const { func, min, max, step } = targetFunction;
+  updateTargetFunctionValues = (algSettings) => {
+    if (algSettings) {
+      const { targetFunction, xmin, xmax, ymin, ymax } = algSettings;
+      const { func, step } = targetFunction;
+
+      const bounds = {
+        xmin: +xmin,
+        xmax: +xmax,
+        ymin: +ymin,
+        ymax: +ymax
+      };
+
+      console.log({
+        type: 'CALCULATE_FUNCTION_VALUES',
+        payload: { func, ...bounds, step }
+      });
+
       this.setState({ functionWorkerBusy: true }, () => {
         this.context.functionWorker.postMessage({
           type: 'CALCULATE_FUNCTION_VALUES',
-          payload: { func, min, max, step }
+          payload: { func, ...bounds, step }
         });
       });
     }
   };
+
+  debouncedUpdateFunctionValues = debounce(this.updateTargetFunctionValues, 400);
 
   validateSettings = () => {
     return [
