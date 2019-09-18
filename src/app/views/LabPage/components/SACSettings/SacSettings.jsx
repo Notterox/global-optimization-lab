@@ -144,6 +144,25 @@ export default class SacSettings extends Component {
               disabled={this.props.disabledField === 'trialsAmount'}
             />
           </FormGroup>
+          <FormGroup
+            label="Точность"
+            labelFor="accuracy"
+          >
+            <ControlGroup fill>
+              <InputGroup
+                placeholder="eps1"
+                small
+                value={0.01}
+                onChange={e => this.handleValueChange('eps1', e.target.value)}
+              />
+              <InputGroup
+                placeholder="eps2"
+                small
+                value={0.01}
+                onChange={e => this.handleValueChange('eps2', e.target.value)}
+              />
+            </ControlGroup>
+          </FormGroup>
         </Card>
       </div>
     );

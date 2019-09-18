@@ -163,6 +163,9 @@ class CyclicRunPage extends Component {
             settings={this.state.sacSettings}
             onChange={s => this.setState({ sacSettings: s })}
           />
+          <br />
+          <br />
+          <br />
         </div>
         <div className="CycleRunPage__right-pane">
           {

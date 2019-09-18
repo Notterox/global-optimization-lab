@@ -56,8 +56,20 @@ export default class OptimizationResultPanel extends Component {
       functionValuesPlot: {
         data: [],
         layout: {
+          title: 'График значения функции от итерации',
+          xaxis: {
+            title: 'Итерация'
+          },
+          yaxis: {
+            title: 'Значение функции'
+          },
           margin: {
             t: 40,
+            b: 40,
+            l: 40
+          },
+          pad: {
+            l: 20,
             b: 20
           }
         },
@@ -67,8 +79,20 @@ export default class OptimizationResultPanel extends Component {
       deltaPlot: {
         data: [],
         layout: {
+          title: 'График значений координат области поиска от итерации',
+          xaxis: {
+            title: 'Итерация'
+          },
+          yaxis: {
+            title: 'Область поиска ΔX1, ΔX2'
+          },
           margin: {
             t: 40,
+            b: 40,
+            l: 40
+          },
+          pad: {
+            l: 20,
             b: 20
           }
         },
@@ -81,27 +105,19 @@ export default class OptimizationResultPanel extends Component {
           title: 'График координаты от номера итерации',
           xaxis: {
             visible: true,
-            title: {
-              text: 'Итерация l',
-              font: {
-                family: 'Axis'
-              }
-            }
+            title: 'Итерация'
           },
           yaxis: {
             visible: true,
-            title: {
-              text: 'X1, X2',
-              font: {
-                family: 'Axis'
-              }
-            }
+            title: 'Координата X1, X2'
           },
           margin: {
             t: 40,
-            b: 20
+            b: 40,
+            l: 40
           },
           pad: {
+            l: 20,
             b: 20
           }
         },
@@ -339,16 +355,13 @@ export default class OptimizationResultPanel extends Component {
               </Checkbox>
               <div>
                 <div>
-                  Решение в точке
-                  {`(${this.props.solution.point.map(n => Number(n).toPrecision(2)).join(', ')})`}
+                  Решение в точке {`(${this.props.solution.point.map(n => Number(n).toPrecision(2)).join(', ')})`}
                 </div>
                 <div>
-                  Итераций
-                  {this.props.solution.iterations}
+                  Итераций {this.props.solution.iterations}
                 </div>
                 <div>
-                  Ошибка решения
-                  {zip(this.props.solution.point, this.props.minPoint).map(([c1, c2]) => Math.abs(c1 - c2).toPrecision(3)).join(', ')}
+                  Ошибка решения {zip(this.props.solution.point, this.props.minPoint).map(([c1, c2]) => Math.abs(c1 - c2).toPrecision(3)).join(', ')}
                 </div>
               </div>
             </div>
