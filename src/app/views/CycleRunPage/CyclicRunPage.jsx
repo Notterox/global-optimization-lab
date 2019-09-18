@@ -182,20 +182,30 @@ class CyclicRunPage extends Component {
                     }
                   ]}
                   layout={{
-                    width: 1400,
+                    width: 700,
                     height: 300,
+                    title: {
+                      text: 'График расстояния между найденной точки и глобальным минимумом для каждого прогона',
+                      font: {
+                        size: 14
+                      }
+                    },
                     xaxis: {
+                      title: 'Номер прогона',
                       range: [1, this.state.runNumValues.length]
+                    },
+                    yaxis: {
+                      title: '|Xalg-Xmin|'
                     },
                     margin: {
                       t: 20,
-                      l: 20,
-                      b: 20,
+                      l: 40,
+                      b: 40,
                       r: 20
                     }
                   }}
                 />
-                <br />
+                <br/>
                 <Plot
                   data={[
                     {
@@ -206,15 +216,25 @@ class CyclicRunPage extends Component {
                     }
                   ]}
                   layout={{
-                    width: 1400,
+                    width: 700,
                     height: 300,
+                    title: {
+                      text: 'График количества итераций для каждого прогона',
+                      font: {
+                        size: 14
+                      }
+                    },
                     xaxis: {
+                      title: 'Номер прогона',
                       range: [1, this.state.runNumValues.length]
+                    },
+                    yaxis: {
+                      title: 'Количество итераций'
                     },
                     margin: {
                       t: 20,
-                      l: 20,
-                      b: 20,
+                      l: 40,
+                      b: 40,
                       r: 20
                     }
                   }}

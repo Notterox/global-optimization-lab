@@ -9,6 +9,27 @@ import SacSettings from '../LabPage/components/SACSettings';
 import ExperimentSettings from './components/ExperimentSettings';
 import WorkerContext from '../../workers/WorkerContext';
 
+const errorTitles = {
+  selectionRate: 'График расстояния между найденной точки и глоб. минимумом для значения степени селективности',
+  shrinkMult: 'График расстояния между найденной точки и глоб. минимумом для значения коэф. сжатия',
+  shrinkRate: 'График расстояния между найденной точки и глоб. минимумом для значения степени сжатия',
+  trialsAmount: 'График расстояния между найденной точки и глоб. минимумом для значения кол-ва проб. точек'
+};
+
+const iterationsTitles = {
+  selectionRate: 'График кол-ва итераций для значения степени селективностиа',
+  shrinkMult: 'График кол-ва итераций для значения коэф. сжатия',
+  shrinkRate: 'График кол-ва итераций для значения степени сжатия',
+  trialsAmount: 'График кол-ва итераций для значения значения кол-ва проб. точек'
+};
+
+const axisTitle = {
+  selectionRate: 'Степень селективности',
+  shrinkMult: 'Коэф. сжатия',
+  shrinkRate: 'Степень сжатия',
+  trialsAmount: 'Кол-во пробных точек'
+};
+
 class ExperimentPage extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -189,12 +210,22 @@ class ExperimentPage extends Component {
                     }
                   ]}
                   layout={{
-                    width: 1400,
+                    width: 700,
                     height: 300,
+                    title: {
+                      text: errorTitles[this.state.experimentSettings.parameter],
+                      font: { size: 12 }
+                    },
+                    xaxis: {
+                      title: axisTitle[this.state.experimentSettings.parameter]
+                    },
+                    yaxis: {
+                      title: '|Xalg-Xmin|'
+                    },
                     margin: {
-                      t: 20,
-                      l: 20,
-                      b: 20,
+                      t: 45,
+                      l: 40,
+                      b: 40,
                       r: 20
                     }
                   }}
@@ -210,12 +241,25 @@ class ExperimentPage extends Component {
                     }
                   ]}
                   layout={{
-                    width: 1400,
+                    width: 700,
                     height: 300,
+                    title: {
+                      text: iterationsTitles[this.state.experimentSettings.parameter],
+                      font: { size: 12 }
+                    },
+                    xaxis: {
+                      title: axisTitle[this.state.experimentSettings.parameter]
+                    },
+                    yaxis: {
+                      title: 'Количество итераций'
+                    },
+                    pad: {
+                      l: 10
+                    },
                     margin: {
-                      t: 20,
-                      l: 20,
-                      b: 20,
+                      t: 45,
+                      l: 40,
+                      b: 40,
                       r: 20
                     }
                   }}
