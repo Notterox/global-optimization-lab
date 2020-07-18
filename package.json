@@ -10,7 +10,7 @@
     "@blueprintjs/core": "^3.18.0",
     "@blueprintjs/select": "^3.10.0",
     "decimal.js": "^10.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mathjs": "^6.2.1",
     "normalize.css": "^8.0.1",
     "plotly.js": "^1.49.4",
